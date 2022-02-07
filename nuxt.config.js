@@ -37,12 +37,48 @@ export default {
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    // https://auth.nuxtjs.org/
+    '@nuxtjs/auth-next'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: '/',
+    baseURL: 'http://localhost:8000/',
+    credentials: true
+  },
+  proxy: {
+    '/laravel': {
+      target: 'http://localhost:8000',
+      pathRewrite: { '^/laravel': '/' }
+    }
+  },
+  auth: {
+    strategies: {
+      'laravelSanctum': {
+        provider: 'laravel/sanctum',
+        url: 'http://localhost:8000',
+        endpoints: {
+          login: {
+            url: '/login'
+          },
+          logout: {
+            url: '/logout'
+          },
+          user: {
+            url: '/api/user'
+          }
+        },
+        user:{
+          property: false
+        }
+      },
+    },
+    redirect: {
+      login: '/login',
+      logout: '/',
+      home: '/',
+    }
   },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
