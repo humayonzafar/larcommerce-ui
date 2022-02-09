@@ -1,5 +1,6 @@
 import colors from 'vuetify/es5/util/colors'
 
+
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -90,9 +91,9 @@ export default {
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
-    customVariables: ['~/assets/variables.scss'],
+    customVariables: ['~/assets/variables.scss', 'https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css'],
     theme: {
-      dark: true,
+      light: true,
       themes: {
         dark: {
           primary: colors.blue.darken2,
@@ -103,6 +104,18 @@ export default {
           error: colors.deepOrange.accent4,
           success: colors.green.accent3,
         },
+        light: {
+          primary: '#2D3753',
+          secondary: '#2D3753',
+          accent: '#3AE3D6',
+          error: '#f44336',
+          info: '#2d3753',
+          success: '#7a904a',
+          warning: '#f78012',
+        }
+      },
+      icons: {
+        iconfont: 'mdi', // default - only for display purposes
       },
     },
   },

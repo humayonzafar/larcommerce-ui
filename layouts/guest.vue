@@ -1,15 +1,13 @@
 <template>
   <v-app>
-    <topbar/>
-    <navbar/>
     <Nuxt/>
-    <VFooter/>
   </v-app>
 </template>
 
 <script>
+
 export default {
-  name: 'DefaultLayout',
+  name: 'GuestLayout',
   data() {
     return {
     }
