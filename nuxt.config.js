@@ -16,11 +16,13 @@ export default {
       {rel: 'stylesheet', type:"text/css",  href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material Icons'}],
   },
 
+  loading: true,
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: ['@mdi/font/css/materialdesignicons.css'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: [  { src: "~/plugins/vuelidate", mode: "client", ssr: false}],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -103,7 +105,7 @@ export default {
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
-          success: colors.green.accent3,
+          success: colors.green.accent3
         },
         light: {
           primary: '#2D3753',
@@ -112,11 +114,11 @@ export default {
           error: '#f44336',
           info: '#2d3753',
           success: '#7a904a',
-          warning: '#f78012',
+          warning: '#f78012'
         }
       },
       icons: {
-        iconfont: 'md', // default - only for display purposes
+        iconfont: 'mdi', // default - only for display purposes
       },
       defaultAssets: {
         icons: false
@@ -125,5 +127,9 @@ export default {
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {},
+  build: {
+    build: {
+      transpile: []
+    }
+  },
 }

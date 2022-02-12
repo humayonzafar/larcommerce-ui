@@ -57,16 +57,18 @@
 </template>
 
 <script>
+import {required, email, minLength, sameAs} from 'vuelidate/lib/validators';
+
 export default {
   name: 'RegisterPage',
   layout: 'guest',
   head: {
     title: '',
     meta: [
-      { hid: 'description', name: 'description', content: 'Register page' }
+      {hid: 'description', name: 'description', content: 'Register page'}
     ],
   },
-  data:() => ({
+  data: () => ({
     form: {
       name: '',
       email: '',
@@ -76,21 +78,40 @@ export default {
     showPassword: false,
     errors: ''
   }),
+  validations: {
+    form: {
+      name: {
+        required
+      },
+      email: {
+        required,
+        email
+      },
+      password: {
+        required,
+        minLength: minLength(6)
+      },
+      password_confirmation: {
+        sameAsPassword: sameAs('password')
+      }
+    },
+  },
   methods: {
     async register() {
       try {
-        let errors = []
-        await this.$axios.$get('sanctum/csrf-cookie')
-        await this.$axios.$post('/register', this.form)
-          .then((resp) => {})
-          .catch((err) => {
-            if (err.response.status === 422) {
-              errors = err.response.data.errors
-            }
-          })
-        this.errors = errors
-        // await this.$auth.loginWith('laravelSanctum', {data: this.form})
-      } catch (error) {}
+        // let errors = [];
+        this.$v.$touch();
+        if (!this.$v.$invalid) {
+          await this.$axios.$get('sanctum/csrf-cookie');
+          await this.$axios.$post('/register', this.form)
+            .then(() => {
+              this.$auth.loginWith('laravelSanctum', {data: this.form});
+            })
+        }
+      } catch (errors) {
+        this.errors = errors;
+        console.log(errors, 'error');
+      }
     }
   }
 }

@@ -42,12 +42,27 @@
         <v-icon>mdi-cart</v-icon>
       </v-badge>
     </v-btn>
+    <v-btn @click="logout" icon>
+      <v-badge
+        content="2"
+        value="2"
+        color="green"
+      >
+        Logout
+      </v-badge>
+    </v-btn>
   </v-app-bar>
 </template>
 
 <script>
 export default {
-  name: "TopBar"
+  name: "TopBar",
+  methods:{
+    async logout(){
+      await this.$axios.$get('sanctum/csrf-cookie');
+      await this.$auth.logout();
+    }
+  }
 }
 </script>
 
