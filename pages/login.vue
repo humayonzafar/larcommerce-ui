@@ -1,5 +1,4 @@
 <template>
-    <v-content>
       <v-container fluid fill-height>
         <v-layout align-center justify-center>
           <v-flex xs12 sm8 md4>
@@ -10,7 +9,7 @@
               <v-card-text>
                 <v-form>
                   <v-text-field
-                    prepend-icon="mdi-person"
+                    prepend-icon="md-person"
                     name="email"
                     label="Email"
                     type="email"
@@ -18,7 +17,7 @@
                   />
                   <v-text-field
                     id="password"
-                    prepend-icon="mdi-lock"
+                    prepend-icon="md-lock"
                     name="password"
                     label="Password"
                     type="password"
@@ -34,7 +33,6 @@
           </v-flex>
         </v-layout>
       </v-container>
-    </v-content>
 </template>
 
 <script>

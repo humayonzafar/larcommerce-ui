@@ -2,8 +2,9 @@
   <v-app>
     <topbar/>
     <navbar/>
-    <Nuxt/>
-    <VFooter/>
+    <v-content>
+      <Nuxt/>
+    </v-content>
   </v-app>
 </template>
 
@@ -11,8 +12,7 @@
 export default {
   name: 'DefaultLayout',
   data() {
-    return {
-    }
+    return {}
   },
 }
 </script>

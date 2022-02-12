@@ -10,14 +10,14 @@
             <v-card-text>
               <v-form>
                 <v-text-field
-                  prepend-icon="mdi-person"
+                  prepend-icon="mdi-email"
                   name="name"
                   label="Name"
                   type="text"
                   v-model="form.name"
                 />
                 <v-text-field
-                  prepend-icon="mdi-person"
+                  prepend-icon="mdi-email"
                   name="email"
                   label="Email"
                   type="email"
@@ -28,16 +28,20 @@
                   prepend-icon="mdi-lock"
                   name="password"
                   label="Password"
-                  type="password"
+                  :type="showPassword ? 'text' : 'password'"
+                  :append-icon="showPassword ? 'mdi-visibility_off' : 'mdi-visibility'"
+                  @click:append="() => (showPassword = !showPassword)"
                   v-model="form.password"
                 />
                 <v-text-field
-                  id="password"
+                  id="confirm_password"
                   prepend-icon="mdi-lock"
-                  name="password"
-                  label="Password"
-                  type="password"
+                  name="confirm_password"
+                  label="Confirm Password"
+                  :type="showPassword ? 'text' : 'password'"
+                  :append-icon="showPassword ? 'mdi-visibility_off' : 'mdi-visibility'"
                   v-model="form.password_confirmation"
+                  @click:append="() => (showPassword = !showPassword)"
                 />
               </v-form>
             </v-card-text>
@@ -69,6 +73,7 @@ export default {
       password: '',
       password_confirmation: ''
     },
+    showPassword: false,
     errors: ''
   }),
   methods: {
@@ -84,7 +89,7 @@ export default {
             }
           })
         this.errors = errors
-        await this.$auth.loginWith('laravelSanctum', {data: this.form})
+        // await this.$auth.loginWith('laravelSanctum', {data: this.form})
       } catch (error) {}
     }
   }

@@ -1,10 +1,9 @@
 import colors from 'vuetify/es5/util/colors'
 
-
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - larcommerce-ui',
+    titleTemplate: '%s larcommerce-ui',
     title: 'larcommerce-ui',
     meta: [
       { charset: 'utf-8' },
@@ -12,11 +11,13 @@ export default {
       { hid: 'description', name: 'description', content: '' },
       { name: 'format-detection', content: 'telephone=no' },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    link: [
+      {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
+      {rel: 'stylesheet', type:"text/css",  href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material Icons'}],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [],
+  css: ['@mdi/font/css/materialdesignicons.css'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [],
@@ -91,7 +92,7 @@ export default {
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
-    customVariables: ['~/assets/variables.scss', 'https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css'],
+    customVariables: ['~/assets/variables.scss'],
     theme: {
       light: true,
       themes: {
@@ -115,8 +116,11 @@ export default {
         }
       },
       icons: {
-        iconfont: 'mdi', // default - only for display purposes
+        iconfont: 'md', // default - only for display purposes
       },
+      defaultAssets: {
+        icons: false
+      }
     },
   },
 
