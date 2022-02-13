@@ -1,5 +1,5 @@
 <template>
-  <v-main>
+  <v-main app>
     <v-bottom-navigation
       :value="activeBtn"
       color="primary"

@@ -71,7 +71,10 @@ export default {
           },
           user: {
             url: '/api/user'
-          }
+          },
+          resetpassword: {
+            url: '/reset-password'
+          },
         },
         user:{
           property: false
@@ -82,6 +85,7 @@ export default {
       login: '/login',
       logout: '/',
       home: '/',
+      resetpassword: 'login'
     }
   },
 
@@ -96,7 +100,7 @@ export default {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      light: true,
+      dark: true,
       themes: {
         dark: {
           primary: colors.blue.darken2,
@@ -128,8 +132,11 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-    build: {
-      transpile: []
-    }
+      transpile: [],
+      loaders: {
+        vue: {
+          compiler: require('vue-template-babel-compiler')
+        }
+      },
   },
 }

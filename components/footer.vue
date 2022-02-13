@@ -1,5 +1,5 @@
 <template>
-  <v-footer app>
+  <v-footer padless>
     <v-card
       flat
       tile
@@ -49,7 +49,7 @@
 
 <script>
 export default {
-  name: "VFooter"
+  name: "Footer"
 }
 </script>
 
