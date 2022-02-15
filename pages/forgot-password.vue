@@ -7,7 +7,6 @@
             <v-toolbar-title>Reset Password</v-toolbar-title>
           </v-toolbar>
           <v-card-text>
-            <!--            @submit.prevent="login"-->
             <v-form>
               <v-text-field
                 prepend-icon="md-person"
@@ -16,16 +15,16 @@
                 type="email"
                 v-model="form.email"
               />
-              <!--              <p class="text&#45;&#45;red" v-if="$v && $v.form.email.$dirty && $v.form.email.$invalid">-->
-              <!--                Please enter a correct email.-->
-              <!--              </p>-->
+              <p class="text--red" v-if="$v.form.email.$dirty && $v.form.email.$invalid">
+                Please enter a correct email.
+              </p>
             </v-form>
           </v-card-text>
           <v-card-actions>
+            <NuxtLink to="/forgot-password">Forgot Password</NuxtLink>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="resetPassword">Reset Password</v-btn>
           </v-card-actions>
-          <NuxtLink to="/forgot-password">Forgot Password</NuxtLink>
         </v-card>
       </v-flex>
     </v-layout>
@@ -38,6 +37,7 @@ import {required, email} from 'vuelidate/lib/validators';
 export default {
   name: 'ForgotPasswordPage',
   layout: 'guest',
+  middleware: 'guest',
   head: {
     title: '',
     meta: [
@@ -48,9 +48,6 @@ export default {
     form: {
       email: '',
     },
-    errors: '',
-    showError: false,
-    response: null
   }),
   validations: {
     form: {

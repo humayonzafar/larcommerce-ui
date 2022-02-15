@@ -22,7 +22,7 @@ export default {
   css: ['@mdi/font/css/materialdesignicons.css'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [  { src: "~/plugins/vuelidate", mode: "client", ssr: false}],
+  plugins: [  { src: "~/plugins/vuelidate", mode: "both"}],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -42,7 +42,9 @@ export default {
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
     // https://auth.nuxtjs.org/
-    '@nuxtjs/auth-next'
+    '@nuxtjs/auth-next',
+    // With default plugin options
+    "vue-toastification/nuxt",
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -94,6 +96,21 @@ export default {
     manifest: {
       lang: 'en',
     },
+  },
+
+  toast: {
+    position: "top-right",
+    timeout: 5000,
+    closeOnClick: false,
+    pauseOnFocusLoss: true,
+    pauseOnHover: true,
+    draggable: true,
+    draggablePercent: 0.6,
+    showCloseButtonOnHover: false,
+    hideProgressBar: false,
+    closeButton: "button",
+    icon: true,
+    rtl: false
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify

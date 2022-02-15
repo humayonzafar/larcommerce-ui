@@ -60,6 +60,7 @@ import {required, email, minLength, sameAs} from 'vuelidate/lib/validators';
 export default {
   name: 'RegisterPage',
   layout: 'guest',
+  middleware: 'guest',
   head: {
     title: '',
     meta: [
@@ -74,7 +75,6 @@ export default {
       password_confirmation: ''
     },
     showPassword: false,
-    errors: ''
   }),
   validations: {
     form: {
@@ -97,18 +97,17 @@ export default {
   methods: {
     async register() {
       try {
-        // let errors = [];
         this.$v.$touch();
         if (!this.$v.$invalid) {
           await this.$axios.$get('sanctum/csrf-cookie');
           await this.$axios.$post('/register', this.form)
             .then(() => {
               this.$auth.loginWith('laravelSanctum', {data: this.form});
+              this.$toast.success('Account created successfully');
             })
         }
-      } catch (errors) {
-        this.errors = errors;
-        console.log(errors, 'error');
+      } catch (err) {
+        this.$toast.success(err.response.data.message);
       }
     }
   }

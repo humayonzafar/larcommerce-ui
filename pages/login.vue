@@ -7,7 +7,6 @@
             <v-toolbar-title>Login</v-toolbar-title>
           </v-toolbar>
           <v-card-text>
-<!--            @submit.prevent="login"-->
             <v-form>
               <v-text-field
                 prepend-icon="md-person"
@@ -15,8 +14,9 @@
                 label="Email"
                 type="email"
                 v-model="form.email"
+                @input="$v.$reset"
               />
-              <p class="text--red" v-if="$v && $v.form.email.$dirty && $v.form.email.$invalid">
+              <p class="red--text px-8" v-if="$v.form.email.$dirty && $v.form.email.$invalid">
                 Please enter a correct email.
               </p>
               <v-text-field
@@ -26,36 +26,28 @@
                 label="Password"
                 type="password"
                 v-model="form.password"
+                @input="$v.$reset"
               />
-              <p class="text--info" v-if="$v &&  $v.form.password.$dirty && $v.form.password.$invalid">
+              <p class="red--text px-8" v-if="$v.form.password.$dirty && $v.form.password.$invalid">
                 Password is incorrect.
               </p>
             </v-form>
           </v-card-text>
           <v-card-actions>
+            <NuxtLink to="/forgot-password">Forgot Password</NuxtLink>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="login">Login</v-btn>
+            <v-btn color="primary" @click="login" :loading="loading" :disabled="loading">Login</v-btn>
           </v-card-actions>
-          <NuxtLink to="/forgot-password">Forgot Password</NuxtLink>
         </v-card>
       </v-flex>
     </v-layout>
-    <v-alert
-      shaped
-      prominent
-      type="error"
-      :value="showError"
-      transition="scale-transition"
-      dismissible
-    >
-      {{ errors }}
-    </v-alert>
   </v-container>
 </template>
 
 <script>
-import {required, email, minLength} from 'vuelidate/lib/validators';
 
+import {required, email, minLength} from 'vuelidate/lib/validators';
+import {responseType} from "@/constants/responsetypes";
 export default {
   name: 'LoginPage',
   layout: 'guest',
@@ -71,9 +63,7 @@ export default {
       email: '',
       password: ''
     },
-    errors: '',
-    showError: false,
-    response: null
+    loading: false
   }),
   validations: {
     form: {
@@ -91,12 +81,18 @@ export default {
     async login() {
       this.$v.$touch();
       if (!this.$v.$invalid) { /* check if form is valid */
+        this.loading =  true;
         try {
           await this.$auth.loginWith('laravelSanctum', {data: this.form});
+          this.$toast.success('Logged in successfully');
         } catch (err) {
-          this.showError = true;
-          this.errors = err && err.response.status === 422 ?
-            'Could not sign you in with those credentials.' : 'Something went wrong';
+          let msg = err.response.data.message;
+          if(err && err.response.status === responseType.TOO_MANY_ATTEMPTS){
+            msg = 'Invalid Credentials';
+          }
+          this.$toast.error(msg);
+        }finally{
+          this.loading = false;
         }
       }
     }

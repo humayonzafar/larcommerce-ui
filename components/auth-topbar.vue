@@ -3,8 +3,6 @@
     :clipped-left="$vuetify.breakpoint.lgAndUp"
     app
   >
-    <!--      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />-->
-
     <v-toolbar-title
       style="width: 350px"
     >
@@ -56,7 +54,7 @@
 
 <script>
 export default {
-  name: "TopBar",
+  name: "AuthTopBar",
   methods:{
     async logout(){
       await this.$axios.$get('sanctum/csrf-cookie');

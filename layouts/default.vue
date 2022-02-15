@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <topbar/>
+    <auth-topbar v-if="$auth.loggedIn"/>
+    <guest-topbar v-if="!$auth.loggedIn"/>
     <navbar/>
     <v-content>
       <Nuxt/>
