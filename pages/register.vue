@@ -1,57 +1,82 @@
 <template>
-    <v-container fluid fill-height>
-      <v-layout align-center justify-center>
-        <v-flex xs12 sm8 md4>
-          <v-card class="elevation-12">
-            <v-toolbar dark color="primary">
-              <v-toolbar-title>Register</v-toolbar-title>
-            </v-toolbar>
-            <v-card-text>
-              <v-form>
-                <v-text-field
-                  prepend-icon="mdi-email"
-                  name="name"
-                  label="Name"
-                  type="text"
-                  v-model="form.name"
-                />
-                <v-text-field
-                  prepend-icon="mdi-email"
-                  name="email"
-                  label="Email"
-                  type="email"
-                  v-model="form.email"
-                />
-                <v-text-field
-                  id="password"
-                  prepend-icon="mdi-lock"
-                  name="password"
-                  label="Password"
-                  :type="showPassword ? 'text' : 'password'"
-                  :append-icon="showPassword ? 'mdi-visibility_off' : 'mdi-visibility'"
-                  @click:append="() => (showPassword = !showPassword)"
-                  v-model="form.password"
-                />
-                <v-text-field
-                  id="confirm_password"
-                  prepend-icon="mdi-lock"
-                  name="confirm_password"
-                  label="Confirm Password"
-                  :type="showPassword ? 'text' : 'password'"
-                  :append-icon="showPassword ? 'mdi-visibility_off' : 'mdi-visibility'"
-                  v-model="form.password_confirmation"
-                  @click:append="() => (showPassword = !showPassword)"
-                />
-              </v-form>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="primary" @click="register">register</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    </v-container>
+  <v-container fluid fill-height>
+    <v-layout align-center justify-center>
+      <v-flex xs12 sm8 md4>
+        <v-card class="elevation-12" :loading="isLoading">
+          <template v-slot:progress>
+            <v-progress-linear
+              absolute
+              color="blue lighten-3"
+              height="4"
+              indeterminate
+            ></v-progress-linear>
+          </template>
+          <v-toolbar dark color="primary">
+            <v-toolbar-title>Register</v-toolbar-title>
+          </v-toolbar>
+          <v-card-text>
+            <v-form>
+              <v-text-field
+                prepend-icon="mdi-email"
+                name="name"
+                label="Name"
+                type="text"
+                v-model="form.name"
+                :disabled="isLoading"
+                :error-messages="nameErrors"
+                hint="Enter your username"
+                @input="$v.$reset"
+              />
+              <v-text-field
+                prepend-icon="mdi-email"
+                name="email"
+                label="Email"
+                type="email"
+                v-model="form.email"
+                :disabled="isLoading"
+                :error-messages="emailErrors"
+                @input="$v.$reset"
+              />
+              <v-text-field
+                id="password"
+                prepend-icon="mdi-lock"
+                name="password"
+                label="Password"
+                :type="showPassword ? 'text' : 'password'"
+                :append-icon="showPassword ? 'mdi-visibility_off' : 'mdi-visibility'"
+                @click:append="() => (showPassword = !showPassword)"
+                v-model="form.password"
+                :disabled="isLoading"
+                :error-messages="passwordErrors"
+                counter
+                @input="$v.$reset"
+              />
+              <v-text-field
+                id="confirm_password"
+                prepend-icon="mdi-lock"
+                name="confirm_password"
+                label="Confirm Password"
+                :type="showPassword ? 'text' : 'password'"
+                :append-icon="showPassword ? 'mdi-visibility_off' : 'mdi-visibility'"
+                v-model="form.password_confirmation"
+                @click:append="() => (showPassword = !showPassword)"
+                :disabled="isLoading"
+                :error-messages="passwordErrors"
+                counter
+                @input="$v.$reset"
+              />
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="register" :loading="isLoading" :disabled="isLoading">register</v-btn>
+          </v-card-actions>
+        </v-card>
+        Already have a account?
+        <nuxt-link to="login">Login</nuxt-link>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
@@ -75,6 +100,7 @@ export default {
       password_confirmation: ''
     },
     showPassword: false,
+    isLoading: false
   }),
   validations: {
     form: {
@@ -94,11 +120,41 @@ export default {
       }
     },
   },
+  computed: {
+    nameErrors() {
+      const errors = [];
+      if (!this.$v.form.name.$dirty) {
+        return errors;
+      }
+      !this.$v.form.name.required && errors.push('Name is required');
+      return errors;
+    },
+    emailErrors() {
+      const errors = [];
+      if (!this.$v.form.email.$dirty) {
+        return errors;
+      }
+      !this.$v.form.email.required && errors.push('Email is required');
+      !this.$v.form.email.email && errors.push('Must be valid e-mail');
+      return errors;
+    },
+    passwordErrors() {
+      const errors = [];
+      if (!this.$v.form.password.$dirty) {
+        return errors;
+      }
+      !this.$v.form.password.required && errors.push('Password is required');
+      !this.$v.form.password.minLength && errors.push('Password must be atleast 6 characters long');
+      !this.$v.form.password_confirmation.sameAsPassword && errors.push('Password and confirm password do not match');
+      return errors;
+    }
+  },
   methods: {
     async register() {
       try {
         this.$v.$touch();
         if (!this.$v.$invalid) {
+          this.isLoading = true;
           await this.$axios.$get('sanctum/csrf-cookie');
           await this.$axios.$post('/register', this.form)
             .then(() => {
@@ -107,7 +163,11 @@ export default {
             })
         }
       } catch (err) {
-        this.$toast.success(err.response.data.message);
+        Object.values(err.response.data.errors).forEach(val => {
+          this.$toast.error(val[0]);
+        });
+      } finally {
+        this.isLoading = false;
       }
     }
   }

@@ -9,19 +9,17 @@
           <v-card-text>
             <v-form>
               <v-text-field
-                prepend-icon="md-person"
+                prepend-icon="mdi-email"
                 name="email"
                 label="Email"
                 type="email"
                 v-model="form.email"
+                :disabled="isLoading"
+                :error-messages="emailErrors"
               />
-              <p class="text--red" v-if="$v.form.email.$dirty && $v.form.email.$invalid">
-                Please enter a correct email.
-              </p>
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <NuxtLink to="/forgot-password">Forgot Password</NuxtLink>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="resetPassword">Reset Password</v-btn>
           </v-card-actions>
@@ -48,6 +46,7 @@ export default {
     form: {
       email: '',
     },
+    isLoading: false
   }),
   validations: {
     form: {
@@ -57,17 +56,33 @@ export default {
       },
     }
   },
+  computed:{
+    emailErrors () {
+      const errors = [];
+      if (!this.$v.form.email.$dirty) {
+        return errors;
+      }
+      !this.$v.form.email.required && errors.push('Email is required');
+      !this.$v.form.email.email && errors.push('Must be valid e-mail');
+      return errors;
+    },
+  },
   methods: {
     async resetPassword() {
       this.$v.$touch();
       if (!this.$v.$invalid) { /* check if form is valid */
         try {
+          this.isLoading = true;
           await this.$axios.$get('sanctum/csrf-cookie');
           await this.$axios.$post('forgot-password', this.form);
+          this.$toast.success('Email sent successfully');
         } catch (err) {
-          this.showError = true;
-          this.errors = err && err.response.status === 422 ?
-            'Could not sign you in with those credentials.' : 'Something went wrong';
+          Object.values(err.response.data.errors).forEach(val => {
+            this.$toast.error(val[0]);
+          });
+        }
+        finally {
+          this.isLoading = false;
         }
       }
     }
