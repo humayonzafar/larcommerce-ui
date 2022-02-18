@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <guest-topbar/>
     <Nuxt/>
   </v-app>
 </template>

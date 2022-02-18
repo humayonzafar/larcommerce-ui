@@ -17,7 +17,7 @@
           <v-card-text>
             <v-form>
               <v-text-field
-                prepend-icon="mdi-email"
+                prepend-icon="mdi-account-circle"
                 name="name"
                 label="Name"
                 type="text"
@@ -43,7 +43,7 @@
                 name="password"
                 label="Password"
                 :type="showPassword ? 'text' : 'password'"
-                :append-icon="showPassword ? 'mdi-visibility_off' : 'mdi-visibility'"
+                :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 @click:append="() => (showPassword = !showPassword)"
                 v-model="form.password"
                 :disabled="isLoading"
@@ -56,10 +56,10 @@
                 prepend-icon="mdi-lock"
                 name="confirm_password"
                 label="Confirm Password"
-                :type="showPassword ? 'text' : 'password'"
-                :append-icon="showPassword ? 'mdi-visibility_off' : 'mdi-visibility'"
+                :type="showConfPassword ? 'text' : 'password'"
+                :append-icon="showConfPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 v-model="form.password_confirmation"
-                @click:append="() => (showPassword = !showPassword)"
+                @click:append="() => (showConfPassword = !showConfPassword)"
                 :disabled="isLoading"
                 :error-messages="passwordErrors"
                 counter
@@ -73,7 +73,7 @@
           </v-card-actions>
         </v-card>
         Already have a account?
-        <nuxt-link to="login">Login</nuxt-link>
+        <v-btn to="login" plain color="primary">Login</v-btn>
       </v-flex>
     </v-layout>
   </v-container>
@@ -100,6 +100,7 @@ export default {
       password_confirmation: ''
     },
     showPassword: false,
+    showConfPassword: false,
     isLoading: false
   }),
   validations: {

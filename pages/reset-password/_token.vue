@@ -2,12 +2,19 @@
   <v-container fluid fill-height>
     <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4>
-        <v-card class="elevation-12">
+        <v-card class="elevation-12" :loading="isLoading">
+          <template v-slot:progress>
+            <v-progress-linear
+              absolute
+              color="blue lighten-3"
+              height="4"
+              indeterminate
+            ></v-progress-linear>
+          </template>
           <v-toolbar dark color="primary">
             <v-toolbar-title>Reset Password</v-toolbar-title>
           </v-toolbar>
           <v-card-text>
-            <!--            @submit.prevent="login"-->
             <v-form>
               <v-text-field
                 id="password"
@@ -18,6 +25,9 @@
                 :append-icon="showPassword ? 'mdi-visibility_off' : 'mdi-visibility'"
                 @click:append="() => (showPassword = !showPassword)"
                 v-model="form.password"
+                :disabled="isLoading"
+                :error-messages="passwordErrors"
+                counter
               />
               <v-text-field
                 id="confirm_password"
@@ -28,17 +38,16 @@
                 :append-icon="showPassword ? 'mdi-visibility_off' : 'mdi-visibility'"
                 v-model="form.password_confirmation"
                 @click:append="() => (showPassword = !showPassword)"
+                :disabled="isLoading"
+                :error-messages="passwordErrors"
+                counter
               />
-              <!--              <p class="text&#45;&#45;red" v-if="$v && $v.form.email.$dirty && $v.form.email.$invalid">-->
-              <!--                Please enter a correct email.-->
-              <!--              </p>-->
             </v-form>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="resetPassword">Reset Password</v-btn>
+            <v-btn color="primary" @click="resetPassword" :loading="isLoading" :disabled="isLoading">Reset Password</v-btn>
           </v-card-actions>
-          <NuxtLink to="/forgot-password">Forgot Password</NuxtLink>
         </v-card>
       </v-flex>
     </v-layout>
@@ -68,9 +77,7 @@ export default {
       password_confirmation: '',
       token: ''
     },
-    errors: '',
-    showError: false,
-    response: null,
+    isLoading: false,
     showPassword: false,
   }),
   validations: {
@@ -88,18 +95,34 @@ export default {
       }
     }
   },
+  computed:{
+    passwordErrors() {
+      const errors = [];
+      if (!this.$v.form.password.$dirty) {
+        return errors;
+      }
+      !this.$v.form.password.required && errors.push('Password is required');
+      !this.$v.form.password.minLength && errors.push('Password must be atleast 6 characters long');
+      !this.$v.form.password_confirmation.sameAsPassword && errors.push('Password and confirm password do not match');
+      return errors;
+    }
+  },
   methods: {
     async resetPassword() {
       this.$v.$touch();
-      console.log(this.$v,'this.$v');
       if (!this.$v.$invalid) { /* check if form is valid */
         try {
+          this.isLoading = true;
           await this.$axios.$get('sanctum/csrf-cookie');
           await this.$axios.$post('reset-password ', this.form);
+          this.$toast.success('Password updated successfully');
+          this.$router.push('/login');
         } catch (err) {
-          this.showError = true;
-          this.errors = err && err.response.status === 422 ?
-            'Could not sign you in with those credentials.' : 'Something went wrong';
+          Object.values(err.response.data.errors).forEach(val => {
+            this.$toast.error(val[0]);
+          });
+        } finally {
+          this.isLoading = false;
         }
       }
     }

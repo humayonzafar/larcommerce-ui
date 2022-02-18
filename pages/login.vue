@@ -17,7 +17,7 @@
           <v-card-text>
             <v-form>
               <v-text-field
-                prepend-icon="mdi-person"
+                prepend-icon="mdi-email"
                 name="email"
                 label="Email"
                 type="email"
@@ -42,13 +42,13 @@
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <NuxtLink to="/forgot-password">Forgot Password</NuxtLink>
+            <v-btn to="/forgot-password">Forgot Password</v-btn>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="login" :loading="isLoading" :disabled="isLoading">Login</v-btn>
           </v-card-actions>
         </v-card>
         Don't have an account?
-        <nuxt-link to="register">Sign Up</nuxt-link>
+        <v-btn to="register">Register</v-btn>
       </v-flex>
     </v-layout>
 

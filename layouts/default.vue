@@ -4,7 +4,9 @@
     <guest-topbar v-if="!$auth.loggedIn"/>
     <navbar/>
     <v-content>
-      <Nuxt/>
+      <v-container fluid>
+        <Nuxt/>
+      </v-container>
     </v-content>
     <v-footer padless>
       <v-card

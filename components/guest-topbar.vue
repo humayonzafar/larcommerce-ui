@@ -29,7 +29,7 @@
         <v-icon>mdi-cart</v-icon>
       </v-badge>
     </v-btn>
-    <nuxt-link to="login">Login</nuxt-link>
+    <v-btn to="login">Login</v-btn>
   </v-app-bar>
 </template>
 

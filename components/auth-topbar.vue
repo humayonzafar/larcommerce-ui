@@ -40,15 +40,7 @@
         <v-icon>mdi-cart</v-icon>
       </v-badge>
     </v-btn>
-    <v-btn @click="logout" icon>
-      <v-badge
-        content="2"
-        value="2"
-        color="green"
-      >
-        Logout
-      </v-badge>
-    </v-btn>
+    <v-btn @click="logout" icon>Logout</v-btn>
   </v-app-bar>
 </template>
 
