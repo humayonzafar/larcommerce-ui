@@ -109,6 +109,7 @@ export default {
   methods: {
     async login() {
       this.$v.$touch();
+      this.successToast('herse');
       if (!this.$v.$invalid) { /* check if form is valid */
         this.isLoading =  true;
         try {

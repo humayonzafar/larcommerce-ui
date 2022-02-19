@@ -49,6 +49,7 @@
                 :disabled="isLoading"
                 :error-messages="passwordErrors"
                 counter
+                hint="Password should be atleast 6 characters long"
                 @input="$v.$reset"
               />
               <v-text-field
@@ -63,6 +64,7 @@
                 :disabled="isLoading"
                 :error-messages="passwordErrors"
                 counter
+                hint="Password and Confirm Password should match"
                 @input="$v.$reset"
               />
             </v-form>
