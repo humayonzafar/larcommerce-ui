@@ -1,11 +1,10 @@
 <template>
   <v-card outlined>
-    <!--    <v-card-title>Filters</v-card-title>-->
-    <!--    <v-divider></v-divider>-->
-    <!--    <template>-->
-    <!--      <v-treeview :items="items" :open="[1]" :active="[5]" :selected-color="'#fff'" activatable open-on-click-->
-    <!--                  dense></v-treeview>-->
-    <!--    </template>-->
+        <v-card-title>Filters</v-card-title>
+        <v-divider></v-divider>
+        <template>
+          <v-treeview :items="categoryTypes.data" item-children="categories" :open="[1]" :active="[5]" :selected-color="'#fff'" activatable open-on-click dense/>
+        </template>
         <v-divider></v-divider>
         <v-card-title>Price</v-card-title>
         <v-range-slider
@@ -59,14 +58,20 @@
 export default {
   name: "sidebar",
   async fetch() {
-    this.sizes = await this.$axios.$get('/api/product-sizes');
+    try{
+      this.sizes = await this.$axios.$get('/api/product-sizes');
+      this.categoryTypes = await this.$axios.$get('/api/category-types');
+    }catch (e){
+      console.log('something went wrong',e);
+    }
   },
   data() {
     return {
       range: [0, 10000],
       min:0,
       max:10000,
-      sizes: []
+      sizes: [],
+      categoryTypes: []
     }
   }
 }

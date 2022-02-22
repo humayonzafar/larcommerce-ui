@@ -4,12 +4,10 @@
         <div class="col-md-3 col-sm-3 col-xs-12">
           <shop-sidebar />
         </div>
-        <div
-          class="col-md-9 col-sm-9 col-xs-12"
-        >
-
-          <v-breadcrumbs class="pb-0" :items="breadcrums"></v-breadcrumbs>
-
+        <div class="col-md-9 col-sm-9 col-xs-12">
+          <v-breadcrumbs
+            class="pb-0"
+            :items="breadcrums"/>
           <v-row dense>
             <v-col cols="12" sm="8" class="pl-6 pt-6">
               <small>Showing 1-12 of 200 products</small>
@@ -22,38 +20,43 @@
           <v-divider></v-divider>
 
           <div class="row text-center">
-            <div class="col-md-3 col-sm-6 col-xs-12" :key="pro.id" v-for="pro in products">
-              <v-hover v-slot:default="{ hover }">
-                <v-card
-                  class="mx-auto"
-                  color="grey lighten-4"
-                  max-width="600"
-                >
-                  <v-img
-                    class="white--text align-end"
-                    :aspect-ratio="16/9"
-                    height="200px"
-                    :src="pro.src"
-                  >
-                    <v-card-title>{{pro.type}} </v-card-title>
-                    <v-expand-transition>
-                      <div
-                        v-if="hover"
-                        class="d-flex transition-fast-in-fast-out white darken-2 v-card--reveal display-3 white--text"
-                        style="height: 100%;"
+            <template v-for="pro in prod">
+              <template v-for="item in pro.product_items" >
+                <div class="col-md-3 col-sm-6 col-xs-12" :key="item.id">
+                  <v-hover v-slot:default="{ hover }">
+                    <v-card
+                      class="mx-auto"
+                      color="grey lighten-4"
+                      max-width="600"
+                    >
+                      <v-img
+                        class="white--text align-end"
+                        :aspect-ratio="16/9"
+                        height="200px"
+                        :src="pro.image[0].file_url"
                       >
-                        <v-btn v-if="hover" href="/product" class="" outlined>VIEW</v-btn>
-                      </div>
+                        <v-card-title>{{pro.category.name}} </v-card-title>
+                        <v-expand-transition>
+                          <div
+                            v-if="hover"
+                            class="d-flex transition-fast-in-fast-out white darken-2 v-card--reveal display-3 white--text"
+                            style="height: 100%;"
+                          >
+                            <v-btn v-if="hover" href="/product" class="" outlined>VIEW</v-btn>
+                          </div>
 
-                    </v-expand-transition>
-                  </v-img>
-                  <v-card-text class="text--primary">
-                    <div><a href="/product" style="text-decoration: none">{{pro.name}}</a></div>
-                    <div>${{pro.price}}</div>
-                  </v-card-text>
-                </v-card>
-              </v-hover>
-            </div>
+                        </v-expand-transition>
+                      </v-img>
+                      <v-card-text class="text--primary">
+                        <div><a href="/product" style="text-decoration: none">{{pro.name}}</a></div>
+                        <div>${{item.price}}</div>
+                      </v-card-text>
+                    </v-card>
+                  </v-hover>
+                </div>
+
+              </template>
+            </template>
           </div>
           <div class="text-center mt-12">
             <v-pagination
@@ -77,8 +80,12 @@
 </style>
 <script>
 export default {
+  async asyncData({ $axios }) {
+    const {data} = await $axios.$get('/api/products');
+    console.log(data,'data');
+    return {prod:data};
+  },
   data: () => ({
-    range: [0, 10000],
     select:'Popularity',
     options: [
       'Default',
@@ -105,114 +112,91 @@ export default {
         href: 'breadcrumbs_shirts',
       },
     ],
-    min:0,
-    max:10000,
-    items: [
-      {
-        id: 2,
-        name: 'Shoes',
-        children: [
-          { id: 2, name: 'Casuals' },
-          { id: 3, name: 'Formals' },
-          { id: 4, name: 'Sneakers' },
-        ],
-      },
-      {
-        id: 1,
-        name: 'Clothing',
-        children: [
-          { id: 5, name: 'Shirts' },
-          { id: 6, name: 'Tops' },
-          { id: 7, name: 'Tunics' },
-          { id: 8, name: 'Bodysuit' },
-        ],
-      }
-    ],
-    products:[
-      {
-        id:1,
-        name:'BLACK TEE',
-        type:'Jackets',
-        price:'18.00',
-        src:require('../assets/img/shop/1.jpg')
-      },
-      {
-        id:2,
-        name:'WHITE TEE',
-        type:'Polo',
-        price:'40.00',
-        src:require('../assets/img/shop/2.jpg')
-      },
-      {
-        id:3,
-        name:'Zara limited...',
-        type:'Denim',
-        price:'25.00',
-        src:require('../assets/img/shop/3.jpg')
-      },
-      {
-        id:4,
-        name:'SKULL TEE',
-        type:'Jackets',
-        price:'30.00',
-        src:require('../assets/img/shop/4.jpg')
-      },
-      {
-        id:5,
-        name:'MANGO WINTER',
-        type:'Sweaters',
-        price:'50.00',
-        src:require('../assets/img/shop/5.jpg')
-      },
-      {
-        id:6,
-        name:'SHIRT',
-        type:'Denim',
-        price:'34.00',
-        src:require('../assets/img/shop/6.jpg')
-      },
-      {
-        id:7,
-        name:'TRUCKER JACKET',
-        type:'Jackets',
-        price:'38.00',
-        src:require('../assets/img/shop/7.jpg')
-      },
-      {
-        id:8,
-        name:'COATS',
-        type:'Jackets',
-        price:'25.00',
-        src:require('../assets/img/shop/8.jpg')
-      },{
-        id:9,
-        name:'MANGO WINTER',
-        type:'Sweaters',
-        price:'50.00',
-        src:require('../assets/img/shop/9.jpg')
-      },
-      {
-        id:10,
-        name:'SHIRT',
-        type:'Denim',
-        price:'34.00',
-        src:require('../assets/img/shop/10.jpg')
-      },
-      {
-        id:11,
-        name:'TRUCKER JACKET',
-        type:'Jackets',
-        price:'38.00',
-        src:require('../assets/img/shop/11.jpg')
-      },
-      {
-        id:12,
-        name:'COATS',
-        type:'Jackets',
-        price:'25.00',
-        src:require('../assets/img/shop/12.jpg')
-      }
-    ]
+    // products:[
+    //   {
+    //     id:1,
+    //     name:'BLACK TEE',
+    //     type:'Jackets',
+    //     price:'18.00',
+    //     src:require('../assets/img/shop/1.jpg')
+    //   },
+    //   {
+    //     id:2,
+    //     name:'WHITE TEE',
+    //     type:'Polo',
+    //     price:'40.00',
+    //     src:require('../assets/img/shop/2.jpg')
+    //   },
+    //   {
+    //     id:3,
+    //     name:'Zara limited...',
+    //     type:'Denim',
+    //     price:'25.00',
+    //     src:require('../assets/img/shop/3.jpg')
+    //   },
+    //   {
+    //     id:4,
+    //     name:'SKULL TEE',
+    //     type:'Jackets',
+    //     price:'30.00',
+    //     src:require('../assets/img/shop/4.jpg')
+    //   },
+    //   {
+    //     id:5,
+    //     name:'MANGO WINTER',
+    //     type:'Sweaters',
+    //     price:'50.00',
+    //     src:require('../assets/img/shop/5.jpg')
+    //   },
+    //   {
+    //     id:6,
+    //     name:'SHIRT',
+    //     type:'Denim',
+    //     price:'34.00',
+    //     src:require('../assets/img/shop/6.jpg')
+    //   },
+    //   {
+    //     id:7,
+    //     name:'TRUCKER JACKET',
+    //     type:'Jackets',
+    //     price:'38.00',
+    //     src:require('../assets/img/shop/7.jpg')
+    //   },
+    //   {
+    //     id:8,
+    //     name:'COATS',
+    //     type:'Jackets',
+    //     price:'25.00',
+    //     src:require('../assets/img/shop/8.jpg')
+    //   },{
+    //     id:9,
+    //     name:'MANGO WINTER',
+    //     type:'Sweaters',
+    //     price:'50.00',
+    //     src:require('../assets/img/shop/9.jpg')
+    //   },
+    //   {
+    //     id:10,
+    //     name:'SHIRT',
+    //     type:'Denim',
+    //     price:'34.00',
+    //     src:require('../assets/img/shop/10.jpg')
+    //   },
+    //   {
+    //     id:11,
+    //     name:'TRUCKER JACKET',
+    //     type:'Jackets',
+    //     price:'38.00',
+    //     src:require('../assets/img/shop/11.jpg')
+    //   },
+    //   {
+    //     id:12,
+    //     name:'COATS',
+    //     type:'Jackets',
+    //     price:'25.00',
+    //     src:require('../assets/img/shop/12.jpg')
+    //   }
+    // ]
   }),
 }
 </script>
