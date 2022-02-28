@@ -1,72 +1,75 @@
 <template>
-    <v-container>
-      <div class="row">
-        <div class="col-md-3 col-sm-3 col-xs-12">
-          <shop-sidebar />
-        </div>
-        <div class="col-md-9 col-sm-9 col-xs-12">
-          <v-breadcrumbs
-            class="pb-0"
-            :items="breadcrums"/>
-          <v-row dense>
-            <v-col cols="12" sm="8" class="pl-6 pt-6">
-              <small>Showing 1-12 of 200 products</small>
-            </v-col>
-            <v-col cols="12" sm="4">
-              <v-select class="pa-0" v-model="select" :items="options" style="margin-bottom: -20px;" outlined dense></v-select>
-            </v-col>
-          </v-row>
-
-          <v-divider></v-divider>
-
+  <v-container>
+    <div class="row">
+      <div class="col-md-3 col-sm-3 col-xs-12">
+        <shop-sidebar/>
+      </div>
+      <div class="col-md-9 col-sm-9 col-xs-12">
+        <v-breadcrumbs
+          class="pb-0"
+          :items="breadcrums"/>
+        <v-row dense>
+          <v-col cols="12" sm="8" class="pl-6 pt-6">
+            <small>Showing 1-12 of 200 products</small>
+          </v-col>
+          <v-col cols="12" sm="4">
+            <v-select class="pa-0" v-model="select" :items="options" style="margin-bottom: -20px;" outlined
+                      dense></v-select>
+          </v-col>
+        </v-row>
+        <v-divider></v-divider>
+        <template v-if="products.length>0">
           <div class="row text-center">
-            <template v-for="pro in prod">
-              <template v-for="item in pro.product_items" >
-                <div class="col-md-3 col-sm-6 col-xs-12" :key="item.id">
-                  <v-hover v-slot:default="{ hover }">
-                    <v-card
-                      class="mx-auto"
-                      color="grey lighten-4"
-                      max-width="600"
+
+            <template v-for="product in products">
+              <div class="col-md-3 col-sm-6 col-xs-12" :key="product.id">
+                <v-hover v-slot:default="{ hover }">
+                  <v-card
+                    class="mx-auto"
+                    color="grey lighten-4"
+                    max-width="600"
+                  >
+                    <v-img
+                      :aspect-ratio="16/9"
+                      :src="product.image[0].file_url"
+                      height="200px"
+                      class="white--text align-end"
                     >
-                      <v-img
-                        class="white--text align-end"
-                        :aspect-ratio="16/9"
-                        height="200px"
-                        :src="pro.image[0].file_url"
-                      >
-                        <v-card-title>{{pro.category.name}} </v-card-title>
-                        <v-expand-transition>
-                          <div
-                            v-if="hover"
-                            class="d-flex transition-fast-in-fast-out white darken-2 v-card--reveal display-3 white--text"
-                            style="height: 100%;"
-                          >
-                            <v-btn v-if="hover" href="/product" class="" outlined>VIEW</v-btn>
-                          </div>
+                      <v-card-title>{{ product.category.name }}</v-card-title>
+                      <v-expand-transition>
+                        <div
+                          v-if="hover"
+                          class="d-flex transition-fast-in-fast-out white darken-2 v-card--reveal display-3 white--text"
+                          style="height: 100%;"
+                        >
+                          <v-btn v-if="hover" href="/product" class="" outlined>VIEW</v-btn>
+                        </div>
 
-                        </v-expand-transition>
-                      </v-img>
-                      <v-card-text class="text--primary">
-                        <div><a href="/product" style="text-decoration: none">{{pro.name}}</a></div>
-                        <div>${{item.price}}</div>
-                      </v-card-text>
-                    </v-card>
-                  </v-hover>
-                </div>
-
-              </template>
+                      </v-expand-transition>
+                    </v-img>
+                    <v-card-text class="text--primary">
+                      <div><a href="/product" style="text-decoration: none">{{ product.name }}</a></div>
+                      <div>${{ product.price }}</div>
+                    </v-card-text>
+                  </v-card>
+                </v-hover>
+              </div>
             </template>
           </div>
           <div class="text-center mt-12">
             <v-pagination
               v-model="page"
-              :length="6"
-            ></v-pagination>
+              :length="productsMeta.meta.last_page"
+              @input="onPaginateClick"
+            />
           </div>
-        </div>
+        </template>
+        <template v-if="products.length===0">
+          <p> No Items Found...! </p>
+        </template>
       </div>
-    </v-container>
+    </div>
+  </v-container>
 </template>
 <style>
 .v-card--reveal {
@@ -80,13 +83,26 @@
 </style>
 <script>
 export default {
-  async asyncData({ $axios }) {
-    const {data} = await $axios.$get('/api/products');
-    console.log(data,'data');
-    return {prod:data};
-  },
+  // async asyncData({$axios, route}) {
+  //   try {
+  //
+  //     // const page = route.query.page ?? 0;
+  //     // const category_id = route.query.category_id ?? '';
+  //     // const range = route.query.range ?? '';
+  //     // const selected_sizes = route.query.selected_sizes ?? '';
+  //
+  //
+  //     console.log(route.query, 'route.query');
+  //     // const {data, ...rest} = await $axios.$get(`/api/products`, {params: {...route.query} });
+  //     // return {products: data, productsMeta: rest};
+  //   } catch (e) {
+  //     console.log(e, 'e');
+  //   }
+  // },
   data: () => ({
-    select:'Popularity',
+    select: 'Popularity',
+    products: [],
+    productsMeta: [],
     options: [
       'Default',
       'Popularity',
@@ -94,7 +110,7 @@ export default {
       'Price: Low to High',
       'Price: High to Low',
     ],
-    page:1,
+    page: 1,
     breadcrums: [
       {
         text: 'Home',
@@ -111,92 +127,29 @@ export default {
         disabled: true,
         href: 'breadcrumbs_shirts',
       },
-    ],
-    // products:[
-    //   {
-    //     id:1,
-    //     name:'BLACK TEE',
-    //     type:'Jackets',
-    //     price:'18.00',
-    //     src:require('../assets/img/shop/1.jpg')
-    //   },
-    //   {
-    //     id:2,
-    //     name:'WHITE TEE',
-    //     type:'Polo',
-    //     price:'40.00',
-    //     src:require('../assets/img/shop/2.jpg')
-    //   },
-    //   {
-    //     id:3,
-    //     name:'Zara limited...',
-    //     type:'Denim',
-    //     price:'25.00',
-    //     src:require('../assets/img/shop/3.jpg')
-    //   },
-    //   {
-    //     id:4,
-    //     name:'SKULL TEE',
-    //     type:'Jackets',
-    //     price:'30.00',
-    //     src:require('../assets/img/shop/4.jpg')
-    //   },
-    //   {
-    //     id:5,
-    //     name:'MANGO WINTER',
-    //     type:'Sweaters',
-    //     price:'50.00',
-    //     src:require('../assets/img/shop/5.jpg')
-    //   },
-    //   {
-    //     id:6,
-    //     name:'SHIRT',
-    //     type:'Denim',
-    //     price:'34.00',
-    //     src:require('../assets/img/shop/6.jpg')
-    //   },
-    //   {
-    //     id:7,
-    //     name:'TRUCKER JACKET',
-    //     type:'Jackets',
-    //     price:'38.00',
-    //     src:require('../assets/img/shop/7.jpg')
-    //   },
-    //   {
-    //     id:8,
-    //     name:'COATS',
-    //     type:'Jackets',
-    //     price:'25.00',
-    //     src:require('../assets/img/shop/8.jpg')
-    //   },{
-    //     id:9,
-    //     name:'MANGO WINTER',
-    //     type:'Sweaters',
-    //     price:'50.00',
-    //     src:require('../assets/img/shop/9.jpg')
-    //   },
-    //   {
-    //     id:10,
-    //     name:'SHIRT',
-    //     type:'Denim',
-    //     price:'34.00',
-    //     src:require('../assets/img/shop/10.jpg')
-    //   },
-    //   {
-    //     id:11,
-    //     name:'TRUCKER JACKET',
-    //     type:'Jackets',
-    //     price:'38.00',
-    //     src:require('../assets/img/shop/11.jpg')
-    //   },
-    //   {
-    //     id:12,
-    //     name:'COATS',
-    //     type:'Jackets',
-    //     price:'25.00',
-    //     src:require('../assets/img/shop/12.jpg')
-    //   }
-    // ]
+    ]
   }),
+  async fetch() {
+    try {
+      const {data, ...rest} = await this.$axios.$get(`/api/products`, {params: {...this.$route.query}});
+      this.products = data;
+      this.productsMeta = rest;
+    } catch (e) {
+      console.log('something went wrong', e);
+    }
+  },
+  created() {
+    this.$nextTick(() => {
+      this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1;
+    });
+  },
+  methods: {
+    async onPaginateClick(value) {
+      await this.$router.push({path: 'shop', query: {page: value, ...this.$route.query}});
+    }
+  },
+  watch: {
+    '$route.query': '$fetch'
+  },
 }
 </script>

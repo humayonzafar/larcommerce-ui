@@ -3,11 +3,11 @@
     <auth-topbar v-if="$auth.loggedIn"/>
     <guest-topbar v-if="!$auth.loggedIn"/>
     <navbar/>
-    <v-content>
+    <v-main>
       <v-container fluid>
         <Nuxt/>
       </v-container>
-    </v-content>
+    </v-main>
     <v-footer padless>
       <v-card
         flat
