@@ -10,13 +10,14 @@
           :items="breadcrums"/>
         <v-row dense>
           <v-col cols="12" sm="8" class="pl-6 pt-6">
-            <small>Showing 1-12 of 200 products</small>
+            <small>Showing {{ productsMeta.meta.from }}-{{ productsMeta.meta.to }} of {{ productsMeta.meta.total }} products</small>
           </v-col>
           <v-col cols="12" sm="4">
             <v-select class="pa-0" v-model="select" :items="options" style="margin-bottom: -20px;" outlined
                       dense></v-select>
           </v-col>
         </v-row>
+        <button @click="resetFilters">Reset Filters</button>
         <v-divider></v-divider>
         <template v-if="products.length>0">
           <div class="row text-center">
@@ -48,7 +49,9 @@
                       </v-expand-transition>
                     </v-img>
                     <v-card-text class="text--primary">
-                      <div><a href="/product" style="text-decoration: none">{{ product.name }}</a></div>
+                      <div>
+                        <v-btn :to="`product/${product.id}`">{{ product.name }}</v-btn>
+                      </div>
                       <div>${{ product.price }}</div>
                     </v-card-text>
                   </v-card>
@@ -139,13 +142,16 @@ export default {
     }
   },
   created() {
-    this.$nextTick(() => {
+    console.log('inside created');
       this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1;
-    });
   },
   methods: {
     async onPaginateClick(value) {
-      await this.$router.push({path: 'shop', query: {page: value, ...this.$route.query}});
+      this.page = value;
+      await this.$router.push({path: 'shop', query: {...this.$route.query, page: value}});
+    },
+    resetFilters(){
+      this.$router.push({path: 'shop'});
     }
   },
   watch: {

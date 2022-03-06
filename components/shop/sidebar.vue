@@ -5,7 +5,6 @@
     <template>
       <v-treeview
         :items="categoryTypes.data"
-        :item-key="categoryTypes.data.id"
         item-children="categories"
         selection-type="leaf"
         :selected-color="'#fff'"
@@ -17,6 +16,7 @@
     </template>
     <v-divider></v-divider>
     <v-card-title>Price</v-card-title>
+    {{range}}
     <v-range-slider
       v-model="range"
       :max="max"
@@ -34,8 +34,7 @@
           outlined
           dense
           @change="onRangeChange($event, 0)"
-
-        ></v-text-field>
+        />
       </v-col>
       <v-col cols="12" sm="2">
         <p class="pt-2 text-center">TO</p>
@@ -47,7 +46,7 @@
           outlined
           dense
           @change="onRangeChange($event, 1)"
-        ></v-text-field>
+        />
       </v-col>
     </v-row>
     <v-divider></v-divider>
@@ -66,6 +65,7 @@
         :key="size.id"
         :value="size.id"
         v-model="selectedSizes"
+        @change="onSizeChange"
         :label="size.size"
         hide-details dense/>
     </v-container>
@@ -99,7 +99,6 @@ export default {
     }
   },
   mounted() {
-    console.log('created');
     if ('selected_sizes' in this.$route.query && this.$route.query.selected_sizes && this.$route.query.selected_sizes !== '') {
       const values = this.$route.query.selected_sizes.split(",").map(val => parseInt(val));
       if (values && values.length > 0) {
@@ -117,42 +116,45 @@ export default {
     }
   },
   watch: {
-    selectedCategory: {
-      handler(value) {
-        this.$nextTick(() => {
-          this.updateRouteParams('category_id', value);
-        });
-      }
-    },
     selectedSizes: {
       handler(value) {
-        this.$nextTick(() => {
-          const sizes = value == null || value.length <= 0 ? '' : value.join(',');
-          if (sizes) {
-            this.updateRouteParams('selected_sizes', sizes);
-          }
-        });
+        // this.$nextTick(() => {
+        //   const sizes = value == null || value.length <= 0 ? '' : value.join(',');
+        //   if (sizes) {
+        //     this.updateRouteParams('selected_sizes', sizes);
+        //   }
+        // });
       }
     },
   },
   methods: {
     selectedCategories(val) {
-      this.selectedCategory = val && val.length > 0 ? val[0] : this.selectedCategory;
+      this.selectedCategory = val && val.length > 0 ? val[0] : '';
+      if(this.selectedCategory!==''){
+        this.updateRouteParams('category_id', this.selectedCategory);
+      }
     },
     onSliderChange(value) {
       this.range = value;
-      console.log(this.range.toString(), 'this.range.toString()')
       this.updateRouteParams('range', this.range.toString());
     },
     onRangeChange(value, index) {
       this.range[index] = parseInt(value);
-      console.log(this.range.toString(), 'this.range.toString()')
+      console.log(this.range,index,value);
       this.updateRouteParams('range', this.range.toString());
     },
     updateRouteParams(key, data) {
       const queryParams = {...this.$route.query, [key]: data};
       delete queryParams.page;
       this.$router.push({path: 'shop', query: queryParams});
+    },
+    onSizeChange(value){
+      this.$nextTick(() => {
+        const sizes = value == null || value.length <= 0 ? '' : value.join(',');
+        if (sizes) {
+          this.updateRouteParams('selected_sizes', sizes);
+        }
+      });
     }
   }
 }
